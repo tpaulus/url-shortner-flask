@@ -38,6 +38,8 @@ services:
       - db-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust  # This should not be used like this in Production
 
 volumes:
   db-data:
