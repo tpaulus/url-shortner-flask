@@ -62,6 +62,27 @@ docker-compose up --build
 You'll want to run all the other steps listed in the Running Locally section as well, like initializing the database, 
 unless you like Service Internal Errors.
 
+### Making changes
+You'll want to set up a venv and install the relevant dependencies as specified in the requirements.txt file. Many IDEs
+(like PyCharm) will help you do this.
+
+### Testing
+Due to the dependency on the Postgres DB, the unit tests in this package are actually integration tests. With a fair bit
+of effort to run the tests in a container along with a DB instance, they could be converted to true unit tests. Before 
+running PyTest, ensure the stack is up and happy (via `docker-compose up`).
+
+Run Tests via:
+```commandline
+pytest
+```
+
+Flake and MyPy have also been configured to provide PEP8 validation and static analysis of types to prevent terrible
+mistakes, those can be run in addition to the unit tests by adding the relevant args to the `pytest` call. To run
+everything, run:
+```
+pytest --flake8 --mypy
+```
+
 # Requirements
 A short URL:
 -   Has one long URL
