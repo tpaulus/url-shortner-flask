@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from typing import Optional
 
 from flask import Flask
@@ -8,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from config import BaseConfig
 from utils.slug_generator import generate_slug
+from utils.stats import generate_url_stats
 
 app = Flask(__name__)
 app.config.from_object(BaseConfig)
@@ -72,6 +74,7 @@ def describe_short_url(slug: str):
         "slug": short_url.slug,
         "long_url": short_url.url,
         "date_created": short_url.date_created,
+        "stats": generate_url_stats(slug)
     }
 
 
