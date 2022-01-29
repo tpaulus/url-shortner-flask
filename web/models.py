@@ -1,18 +1,31 @@
-# models.py
-
-
 import datetime
+from uuid import uuid4
+
 from app import db
+from constants import SLUG_LENGTH
 
 
-class Post(db.Model):
+class ShortUrl(db.Model):
+    __tablename__ = 'urls'
 
-    __tablename__ = 'posts'
+    slug = db.Column(db.String(length=SLUG_LENGTH), primary_key=True, unique=True)
+    url = db.Column(db.String, nullable=False)
+    date_created = db.Column(db.DateTime, nullable=False)
 
-    id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String, nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False)
+    def __init__(self, slug: str, url: str):
+        self.slug = slug
+        self.url = url
+        self.date_created = datetime.datetime.now()
 
-    def __init__(self, text):
-        self.text = text
-        self.date_posted = datetime.datetime.now()
+
+class Access(db.Model):
+    __tablename__ = 'access'
+
+    event_id = db.Column(db.String(length=36), primary_key=True)  # UUIDs are 36 characters long
+    slug = db.Column(db.String(length=SLUG_LENGTH), db.ForeignKey(ShortUrl.slug), nullable=False)
+    access_date = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, slug: str):
+        self.event_id = str(uuid4())
+        self.slug = slug
+        self.access_date = datetime.datetime.now()
