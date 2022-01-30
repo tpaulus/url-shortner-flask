@@ -9,7 +9,7 @@ services:
     links:
       - postgres:postgres
     volumes:
-      - web-data:/usr/src/app/static
+      - web-data:/static
     env_file: 
       - .env
     command: /usr/local/bin/gunicorn -w 2 -b :8000 app:app

@@ -10,13 +10,86 @@ docker-compose up
 
 After the initial launch, you will need to initialize the DB, which can be done via the following command:
 ```commandline
-docker-compose exec web python3 -c "from app import db; db.create_all(); print('DB Tables Created')"
+docker-compose exec web python3 -c "from app import create_app, db; db.create_all(app=create_app()); print('DB Tables Created')"
 ```
 
 Once you are done, you can stop and remove all the associated containers via:
 ```commandline
 docker-compose down
 ```
+
+## Using the Service
+Users can interface with the service both via an admittedly ugly UI interface, hosted at the root of the service
+(example.com), or via a REST API.
+
+Regardless of how the short URL was made, it can be expanded by visiting that url, which if valid, will redirect the
+user to the long URL.
+
+## Using the UI
+
+
+## Using the API
+### Creating a new Short URL
+| HTTP Method | PUT     |
+|-------------|---------|
+ | Path        | `/slug` |
+
+Example Body:
+```json
+{
+  "long_url": "https://example.com",
+  "expires": {
+    "days": 1,
+    "seconds": 2,
+    "microseconds": 3,
+    "milliseconds": 4,
+    "minutes": 5,
+    "hours": 6,
+    "weeks": 7
+  }
+}
+```
+
+Only **`long_url`** is a required field.
+
+Example Response:
+```json
+{
+    "short_url": "127.0.0.1/h5tye9df",
+    "slug": "h5tye9df"
+}
+```
+
+
+### Describing a Short URL
+| HTTP Method | GET             |
+|-------------|-----------------|
+ | Path        | `/slugs/<slug>` |
+
+No request body is required for this path.
+
+Example Response:
+```json
+{
+    "date_created": "Sat, 29 Jan 2022 18:11:19 GMT",
+    "expired": true,
+    "expires": "Sat, 29 Jan 2022 18:11:26 GMT",
+    "long_url": "https://tompaulus.com",
+    "slug": "h5tye9df",
+    "stats": {
+        "all_time": 1,
+        "last_day": 1,
+        "last_week": 1
+    }
+}
+```
+
+### Deleting a Short URL
+| HTTP Method | DELETE          |
+|-------------|-----------------|
+ | Path        | `/slugs/<slug>` |
+
+No request body is required for this path. No response body will be provided.
 
 ## Design Decisions
 ### Database
@@ -30,8 +103,8 @@ cloud, either managing the cluster ourselves, or using something like Amazon Aur
 want to split the DB Connection pool to have both sessions for the leader node, as well a pool for the followers so that
 read only traffic could be directed to the readers to reduce load on the writers.
 
-Long term, it may be necessary to implement an aggregation function for the Access DB to flatten the old records if we
-do not ever want to provide more granularity than 24-hours, 7-days, and all time to reduce the size and number of
+Long term, it may be necessary to implement an aggregation function for the Access Table to flatten the old records if
+we do not ever want to provide more granularity than 24-hours, 7-days, and all time to reduce the size and number of
 records in that table.
 
 ### Access Logging

@@ -3,20 +3,98 @@
 {% block content %}
 
 <div class="text-center">
-  <h1>Welcome!</h1>
+  <h1>URL Shortener!</h1>
+  <p>Turn those long, ugly urls, into short, sharable URLs!</p>
 </div>
 
 <br>
 
-<form action="/" method="POST">
+
+
+<form id="shorten-form" onsubmit="return false;">
   <div class="form-group">
-    <input name="text" class="form-control input-lg" type="text" placeholder="Enter a message" required>
+    <input id="long_url" name="text" class="form-control input-lg" type="text" placeholder="https://cloudflare.com" required>
   </div>
-  <input type="submit" class="btn btn-primary btn-lg btn-block" value="Submit">
+  <input type="submit" class="btn btn-primary btn-lg btn-block" value="Shorten">
+</form>
+
+<form id="shorten-result-form" onsubmit="return false;" style="display: none;">
+  <div class="form-group">
+    <input id="short_url" name="text" readonly>
+  </div>
+  <input type="submit" class="btn btn-primary btn-lg btn-block" value="Make Another">
 </form>
 
 <br>
 <hr>
+
+<h2>Inspect an existing url</h2>
+<form id="describe-form" onsubmit="return false;">
+  <div class="form-group">
+    <input name="text" class="form-control input-lg" type="text" placeholder="example.com/abcdef" required>
+  </div>
+  <input type="submit" class="btn btn-primary btn-lg btn-block" value="Search">
+</form>
+
+<form id="describe-result-form" onsubmit="return false;" style="display: none;">
+  <div class="mb-3 row">
+    <label for="describe-slug" class="col-sm-3 col-form-label">Slug</label>
+    <div class="col-sm-9">
+      <input type="text" readonly class="form-control-plaintext" id="describe-slug">
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <label for="describe-long-url" class="col-sm-3 col-form-label">Long URL</label>
+    <div class="col-sm-9">
+      <input type="text" readonly class="form-control-plaintext" id="describe-long-url">
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <label for="describe-date-created" class="col-sm-3 col-form-label">Date Created</label>
+    <div class="col-sm-9">
+      <input type="text" readonly class="form-control-plaintext" id="describe-date-created">
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <label for="describe-expires" class="col-sm-3 col-form-label">Expires</label>
+    <div class="col-sm-9">
+      <input type="text" readonly class="form-control-plaintext" id="describe-expires">
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <label for="describe-expired" class="col-sm-3 col-form-label">Expired</label>
+    <div class="col-sm-9">
+      <input type="text" readonly class="form-control-plaintext" id="describe-expired">
+    </div>
+  </div>
+
+  <h4>Access Statistics</h4>
+  <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Time Period</th>
+      <th scope="col">Calls</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Last 24 Hours</th>
+      <td id="stats-24-hours"></td>
+    </tr>
+    <tr>
+      <th scope="row">Last 7 Days</th>
+      <td id="stats-7-days"></td>
+    </tr>
+    <tr>
+      <th scope="row">All Time</th>
+      <td id="stats-all-time"></td>
+    </tr>
+  </tbody>
+</table>
+
+  <button type="submit" class="btn btn-primary">Back</button>
+  <button class="btn btn-danger" type="button" id="delete-slug">Delete</button>
+</form>
 
 <div>
 </div>
