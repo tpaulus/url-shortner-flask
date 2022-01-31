@@ -26,7 +26,19 @@ Regardless of how the short URL was made, it can be expanded by visiting that ur
 user to the long URL.
 
 ## Using the UI
+![Landing Page Screenshot](screenshots/landing.png)
 
+To shorten a URL, enter the long URL in the top input box and either press enter, or click shorten. If you wish to
+create a short-lived URL, you will need to use the API.
+
+![Shorten Result Screenshot](screenshots/shortened.png)
+The short URL is returned and can be copied from the text box and then redistributed as needed.
+
+Details about an existing short URL,including the ability to delete the URL can be found by entering either the short
+URL or the slug (the unique 8 characters following the `/`) into the search box and either pressing enter, or clicking
+the "Search" button.
+
+![Describe Short URL Result Screenshot](screenshots/detail.png)
 
 ## Using the API
 ### Creating a new Short URL
@@ -156,7 +168,14 @@ everything, run:
 pytest --flake8 --mypy
 ```
 
-# Requirements
+## Security
+This is NOT a production application and should not be used in a production setting without some significant changes.
+Risks with the application as implemented:
+* Any user can get the details for a short URL, and delete it, even if they were not the one to create the short URL initially.
+* The application should be resilient to SLQ Injection Attacks via the ORM's (SQLAlchemy) protections, but this has not been verified.
+* There is no rate-limiting on any of the APIs, allowing an attacker to very easily break things from a single endpoint.
+
+# Project Requirements
 A short URL:
 -   Has one long URL
 -   This URL shortener should have a well-defined API for URLs created, including analytics of usage.
