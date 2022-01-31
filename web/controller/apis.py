@@ -1,15 +1,17 @@
 import logging
 from datetime import timedelta, datetime
+from json import dumps
 from typing import Optional, Union, Dict
 
-from flask import render_template, request
+from flask import render_template, request, Response
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
 from app import db
-from constants import VALID_TIME_UNITS, MAX_SLUG_GENERATION_ATTEMPTS
+from constants import MAX_SLUG_GENERATION_ATTEMPTS, SLUG_LENGTH
+from controller.validations import validate_create
 from models import ShortUrl, Access
 from utils.slug_generator import generate_slug
 from utils.stats import generate_url_stats
@@ -23,24 +25,15 @@ def index():
 
 
 def create_short_url():
+    errors = validate_create(request)
+    if errors is not None:
+        log.warning(errors)
+        abort(Response(dumps({"Message": ";".join(errors)}), 400))  # 400 - Bad Request
+
     long_url: Optional[str] = request.json.get("long_url")
     expires: Optional[Dict[str, Union[str, int]]] = request.json.get("expires")
 
-    # TODO Support Custom Aliases (and check it against the reserved list)
-
-    if not long_url:
-        log.info("No Long URL Present in the request")
-        abort(400)  # 400 - Bad Request
-
     if expires:
-        if any(key not in VALID_TIME_UNITS for key in expires):
-            log.info("Invalid Expiry Time Unit")
-            abort(400)  # 400 - Bad Request
-
-        if any(not isinstance(value, int) or value <= 0 for value in expires.values()):
-            log.info("Value is not a positive integer")
-            abort(400)  # 400 - Bad Request
-
         expiry_time_delta: Optional[timedelta] = timedelta(**expires)
     else:
         expiry_time_delta = None
@@ -65,10 +58,13 @@ def create_short_url():
                 "short_url": f"{request.host}/{proposed_slug}"}
 
     log.error("Unable to shorten URL")
-    abort(500)  # 500 - Internal Error
+    abort(Response(dumps({"Message": "Something went wrong generating your short url."}), 500))  # 500 - Service Error
 
 
 def delete_short_url(slug: str):
+    if not slug or len(slug) != SLUG_LENGTH or not isinstance(slug, str):
+        abort(Response(dumps({"Message": "Provided Slug is not valid"}), 400))  # 400 - Bad Request
+
     short_url: Optional[ShortUrl] = ShortUrl.query.get_or_404({"slug": slug})
 
     session: Session = db.session
@@ -81,8 +77,8 @@ def delete_short_url(slug: str):
 
 
 def describe_short_url(slug: str):
-    if not slug:
-        abort(400)  # 400 - Bad Request
+    if not slug or len(slug) != SLUG_LENGTH or not isinstance(slug, str):
+        abort(Response(dumps({"Message": "Provided Slug is not valid"}), 400))  # 400 - Bad Request
 
     short_url: ShortUrl = ShortUrl.query.get_or_404({"slug": slug})
 
@@ -97,11 +93,14 @@ def describe_short_url(slug: str):
 
 
 def expand_url(slug: str):
+    if not slug or len(slug) != SLUG_LENGTH or not isinstance(slug, str):
+        abort(Response(dumps({"Message": "Provided Slug is not valid"}), 400))  # 400 - Bad Request
+
     short_url: ShortUrl = ShortUrl.query.get_or_404({"slug": slug})
 
     if short_url.expires and short_url.expires < datetime.utcnow():
         log.info(f"Received request to expand {slug}, but it has expired.")
-        abort(410)  # 410 - Gone
+        abort(410, "The provided short URL has expired")  # 410 - Gone
 
     # Log Access
     session: Session = db.session
