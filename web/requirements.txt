@@ -2,7 +2,7 @@ Flask==2.2.3
 Flask-SQLAlchemy==2.5.1
 types-Flask-SQLAlchemy==2.5.9.1
 Jinja2==3.0.3
-MarkupSafe==2.0.1
+MarkupSafe==2.1.2
 SQLAlchemy==1.4.46
 sqlalchemy-stubs==0.4
 Werkzeug==2.0.2
