@@ -12,7 +12,7 @@ psycopg2-binary==2.9.5
 flask-inputs==0.3.0
 jsonschema==4.17.3
 
-pytest==6.2.5
+pytest==7.2.1
 pytest-mypy==0.10.3
 mypy==1.0.1
 pytest-flake8==1.1.1
