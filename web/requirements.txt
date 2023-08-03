@@ -16,5 +16,5 @@ pytest==7.4.0
 pytest-mypy==0.10.3
 mypy==1.4.1
 pytest-flake8==1.1.1
-flake8==6.0.0
+flake8==6.1.0
 Requests==2.31.0
