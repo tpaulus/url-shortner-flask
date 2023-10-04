@@ -8,7 +8,7 @@ sqlalchemy-stubs==0.4
 Werkzeug==3.0.0
 gunicorn==21.2.0
 itsdangerous==2.1.2
-psycopg2-binary==2.9.7
+psycopg2-binary==2.9.9
 flask-inputs==0.3.0
 jsonschema==4.19.1
 
