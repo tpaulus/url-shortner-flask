@@ -14,7 +14,7 @@ jsonschema==4.20.0
 
 pytest==7.4.4
 pytest-mypy==0.10.3
-mypy==1.7.0
+mypy==1.8.0
 pytest-flake8==1.1.1
 flake8==6.1.0
 Requests==2.31.0
