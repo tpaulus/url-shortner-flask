@@ -9,7 +9,7 @@ Werkzeug==3.0.3
 gunicorn==22.0.0
 itsdangerous==2.2.0
 psycopg2-binary==2.9.9
-flask-inputs==0.3.0
+flask-inputs==1.0.0
 jsonschema==4.22.0
 
 pytest==8.2.1
